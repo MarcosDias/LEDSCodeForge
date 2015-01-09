@@ -1,5 +1,9 @@
 package model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -41,28 +45,35 @@ public class Forge extends BaseFramework {
      *
      * @param listaEntidades - Lista de entidades ja mapeadas para os no do grafo
      */
-    public void configEntidades(List<Node> listaEntidades) {
+    public void configEntidades(ArrayList<SuperClass> listaEntidades) {
 
-        for (Node nodeDom : listaEntidades) {
-            this.script += "jpa-new-entity --named " + nodeDom.getNome() + "\n";
-            HashMap<String, String> prop = nodeDom.getPropriedades();
-            Set<String> chaves = prop.keySet();
-            for (String chave : chaves) {
-                String field = new String();
-                field = "jpa-new-field --named " + chave;
+        // TODO - Enum nao implementado
+        for (SuperClass classModel : listaEntidades) {
+            if (classModel instanceof model.Class) {
+                this.script += "jpa-new-entity --named " + classModel.getName() + "\n";
+                
+                for (Attribute attr : ((Class) classModel).getAttributes()){
+                    String field = "";
+                    field = "jpa-new-field --named " + attr.getName();
+                    
+                    if(attr.getType() instanceof PrimitiveType){
+                        PrimitiveType typeAttribute = (PrimitiveType) attr.getType();
+                        
+                        String traducao = TiposBasicosForge.temTraducao(typeAttribute.getType().name());
+                        
+                        field += " --type " + traducao + "\n";
+                        
+                    } else if (attr.getType() instanceof model.Class){
+                        model.Class traducao = (Class) attr.getType();
+                        field += " --type org." + this.nomeProjeto + ".model."
+                                + traducao.getName() + " --relationshipType "
+                                + "One-to-Many\n";
+                    }
 
-                if (TiposBasicosForge.temTraducao(prop.get(chave)) == null) {
-                    // TODO Tratar outros relacionamentos
-                    field += " --type org." + this.nomeProjeto + ".model."
-                            + prop.get(chave) + " --relationshipType "
-                            + "One-to-Many\n";
-                } else {
-                    field += " --type " + prop.get(chave) + "\n";
+                    field += "constraint-add --constraint NotNull --onProperty "
+                            + attr.getName() + "\n";
+                    script += field;
                 }
-
-                field += "constraint-add --constraint NotNull --onProperty "
-                        + chave + "\n";
-                script += field;
             }
         }
         this.script += "\n";

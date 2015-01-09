@@ -12,7 +12,6 @@ public enum TiposBasicosForge {
 	DATE("java.util.Date"),
 	CHAR("char"),
 	SHORT("short"),
-	ENTITY(null),  
 	DOUBLE("double"),
 	BOOLEAN("boolean"),
 	// Extra
