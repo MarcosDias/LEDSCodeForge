@@ -20,16 +20,16 @@ public class ForgeController {
         // TODO Enuns nao foram implementados
         ClassDiagram diagram = specification.getClassDiagram();
         ArrayList<SuperClass> classesModel = diagram.getClasses();
+        forge.configEntidades(classesModel);
 
-        if (specification.getFeature().getApplicationType() == "WEB") {
-            forge.configEntidades(classesModel);
+        if (specification.getFeature().getApplicationType().equals("WEB")) {
             forge.gerarInterfaceWeb();
             forge.configRest();
-            forge.build();
-            forge.exit();
         }
+        forge.build();
+        forge.exit();
 
         forge.print(Forge.ARQUIVO, Forge.EXTENSAO);
-        forge.print(Forge.TERMINAL, null);
+//        forge.print(Forge.TERMINAL, null);
     }
 }
