@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class Forge extends BaseFramework {
-    public final static String EXTENSAO = "forge";
+    public final static String EXTENSAO = "fsh";
 
 
     /**
@@ -35,7 +35,7 @@ public class Forge extends BaseFramework {
      * @param provider - Define o ORM
      * @param dbType   - Defino o Banco de Dados
      */
-    public void configBanco(String provider, DbType dbType) {
+    public void configBanco(String provider, String dbType) {
         this.script += "jpa-setup --provider " + provider + " --dbType "
                 + dbType + "\n\n";
     }
