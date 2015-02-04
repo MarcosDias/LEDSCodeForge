@@ -50,7 +50,19 @@ public class Forge extends BaseFramework {
         // TODO - Enum nao implementado
         for (SuperClass classModel : listaEntidades) {
             if (classModel instanceof model.Class) {
-                this.script += "jpa-new-entity --named " + classModel.getName() + "\n";
+                
+                if(((Class) classModel).isAbstractClass()){
+                    this.script += "jpa-new-mapped-superclass --named " + classModel.getName();
+                }else{
+                    this.script += "jpa-new-entity --named " + classModel.getName();    
+                }
+                
+                if(((Class) classModel).getParent() != null){
+                    Class parent = ((Class) classModel).getParent();
+                    this.script += " --extends " + parent.getName();
+                }
+                
+                this.script += "\n";
                 
                 for (Attribute attr : ((Class) classModel).getAttributes()){
                     String field = "";
